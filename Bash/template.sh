@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Author: Jelle Van Holsbeeck <jelle.vanholsbeeck@outlook.com>
+# Author: Jelle Van Holsbeeck <jelle@holsbeeck.com>
 
 # Abort on nonzero exitstatus
 set -o errexit
