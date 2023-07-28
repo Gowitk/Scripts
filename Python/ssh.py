@@ -1,13 +1,32 @@
-import os 
+import os
 import paramiko
 import getpass
 import time
 import re
 from colorama import Fore, Style
 
+
 def print_banner():
     banner = """
 \033[1;35m
+********************************************************************************
+************************************████████************************************
+**********************************█████████████*********************************
+*******************************███████████████████******************************
+****************************█████████████████████████***************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************█████████████████████████████*************************
+**************************███████████████████████████***************************
+*******************************████████****███████******************************
+******************************████████*****███████******************************
+******************************███████******███████******************************
+********************************************************************************
+
   █████████                                                                 
  ███░░░░░███                                                                
 ░███    ░░░  █████████████    ██████   ████████  ████████   ██████   ██████ 
@@ -26,6 +45,7 @@ Contact: jelle@holsbeeck.com
 """
     print(banner)
 
+
 def get_user_input(prompt):
     try:
         if hasattr(__builtins__, 'raw_input'):
@@ -34,7 +54,8 @@ def get_user_input(prompt):
             return input(prompt)
     except EOFError:
         return None
-    
+
+
 def send_command(channel, command):
     channel.send(command + "\n")
     time.sleep(2)  # Wait for output to be available
@@ -43,6 +64,7 @@ def send_command(channel, command):
         output += channel.recv(1024).decode()
         time.sleep(1)
     return output
+
 
 def establish_ssh_connection(ip, username, password):
     ssh_client = paramiko.SSHClient()
@@ -65,8 +87,10 @@ def establish_ssh_connection(ip, username, password):
         for line in lines:
             if line.startswith("Status:"):
                 connection_status = line.split(":")[1].strip()
-                connection_status_clean = connection_status.split("(")[0].strip()  # Clean cutoff after 'D'
-                print(Fore.CYAN + f"Status: {connection_status_clean}" + Style.RESET_ALL)
+                connection_status_clean = connection_status.split(
+                    "(")[0].strip()  # Clean cutoff after 'D'
+                print(Fore.CYAN +
+                      f"Status: {connection_status_clean}" + Style.RESET_ALL)
                 # Check connection status using regular expression
                 if re.search(r'connected', connection_status, re.IGNORECASE):
                     status_connected = True
@@ -75,7 +99,8 @@ def establish_ssh_connection(ip, username, password):
         # Check the connection status and take appropriate action
         if not status_connected:
             inform_command = "set-inform http://192.168.9.12:8080/inform"
-            print(Fore.RED + "Status is not connected. Invoking 'set-inform' command." + Style.RESET_ALL)
+            print(
+                Fore.RED + "Status is not connected. Invoking 'set-inform' command." + Style.RESET_ALL)
             output_set_inform = send_command(channel, inform_command)
             print(output_set_inform)
 
@@ -86,15 +111,16 @@ def establish_ssh_connection(ip, username, password):
     finally:
         ssh_client.close()
 
+
 def main():
     os.system("clear")
     print_banner()
 
     vlan = get_user_input("Enter the VLAN ID: ")
     device = get_user_input("Enter the number of the device: ")
-   
+
     ip = "192.168." + str(vlan) + "." + str(device)
-    if not ip: 
+    if not ip:
         print("Invalid IP address.")
         return
 
@@ -109,6 +135,7 @@ def main():
         return
 
     establish_ssh_connection(ip, username, password)
+
 
 if __name__ == "__main__":
     main()
