@@ -25,5 +25,5 @@ choco install discord -y
 choco install vagrant -y
 choco install spotify -y 
 
-# Install WSL 
+# Install WSL : https://docs.microsoft.com/en-us/windows/wsl/install-win10
 wsl --install 
