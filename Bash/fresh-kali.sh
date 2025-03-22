@@ -24,7 +24,9 @@ sudo tee /etc/firefox/policies/policies.json > /dev/null <<EOF
     "Extensions": {
       "Install": [
         "https://addons.mozilla.org/firefox/downloads/latest/foxyproxy-standard/latest.xpi",
-        "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer/addon-wappalyzer-latest.xpi"
+        "https://addons.mozilla.org/firefox/downloads/latest/wappalyzer/addon-wappalyzer-latest.xpi",
+        "https://addons.mozilla.org/firefox/downloads/latest/cookie-editor/latest.xpi",
+        "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
       ]
     }
   }
