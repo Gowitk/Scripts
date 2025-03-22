@@ -12,6 +12,9 @@ sudo apt upgrade -y
 
 # Add a choice menu
 sudo apt install -y kali-linux-everything
-sudo apt install kali-wallpapers-2020.4
+sudo apt install -y kali-wallpapers-2020.4
 
-sudo apt install -y flameshot
+sudo DEBIAN_FRONTEND=noninteractive apt install -y flameshot
+
+# Keep at end
+sudo apt autoremove -y
