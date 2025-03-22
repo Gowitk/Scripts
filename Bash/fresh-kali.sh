@@ -11,9 +11,13 @@ sudo apt update -y
 sudo apt upgrade -y
 
 # Add a choice menu
+
+
+sudo apt install -y jq
 sudo apt install -y kali-linux-everything
 sudo apt install -y kali-wallpapers-2020.4
 
+sudo DEBIAN_FRONTEND=noninteractive apt install -y tor 
 sudo DEBIAN_FRONTEND=noninteractive apt install -y flameshot
 
 sudo mkdir -p /etc/firefox/policies
@@ -36,3 +40,4 @@ EOF
 
 # Keep at end
 sudo apt autoremove -y
+history -c && unset HISTFILE && rm -rf ~/.bash_history ~/.zsh_history
