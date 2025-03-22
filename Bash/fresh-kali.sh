@@ -1,27 +1,53 @@
 #!/bin/bash
 
-# Abort on nonzero exitstatus
 set -o errexit
-# Abort on unbound variable 
 set -o nounset
-# Don't hide errors within pipes
 set -o pipefail
 
-# Update & upgrade
-sudo apt update -y
-sudo apt upgrade -y
+# Log path
+SUMMARY_LOG="/var/log/setup.log"
+DETAIL_LOG="/var/log/setup-details.log"
 
-# Install useful tools
-sudo apt install -y jq kali-linux-everything kali-wallpapers-2020.4
+# Check on root
+if [[ "$EUID" -ne 0 ]]; then
+  echo "[!] This script must be run as root (sudo)." >&2
+  exit 1
+fi
 
-# Install with suppressed prompts
-sudo DEBIAN_FRONTEND=noninteractive apt install -y tor flameshot
+# Logging function
+log_summary() {
+  GREEN="\e[32m"
+  RESET="\e[0m"
+  echo -e "${GREEN}[+] $1${RESET}"
+  echo "[+] $1" >> "$SUMMARY_LOG"
+}
 
-# Create Firefox policies directory
-sudo mkdir -p /etc/firefox/policies
+run_quiet() {
+  echo "[>] Running: $*" >> "$DETAIL_LOG"
+  "$@" >> "$DETAIL_LOG" 2>&1
+}
 
-# Apply Firefox extension policies
-sudo tee /etc/firefox/policies/policies.json > /dev/null <<EOF
+log_step() {
+  log_summary "$1"
+}
+
+# Script start
+
+log_step "Starting Kali setup"
+
+log_step "Updating system"
+run_quiet apt update -y
+run_quiet apt full-upgrade -y
+log_step "System updated"
+
+log_step "Installing core packages"
+run_quiet apt install -y jq flameshot tor kali-wallpapers-2020.4 kali-linux-everything
+log_step "Packages installed"
+
+log_step "Configuring Firefox extensions"
+run_quiet mkdir -p /etc/firefox/policies
+
+tee /etc/firefox/policies/policies.json > /dev/null <<EOF
 {
   "policies": {
     "Extensions": {
@@ -36,13 +62,17 @@ sudo tee /etc/firefox/policies/policies.json > /dev/null <<EOF
 }
 EOF
 
-# Clean up unused packages
-sudo apt autoremove -y
+log_step "Firefox extensions configured"
 
-# Clear bash history
-history -c
+log_step "Cleaning up unused packages"
+run_quiet apt autoremove -y
+log_step "Cleanup done"
+
+log_step "Clearing shell history"
+history -c || true
 unset HISTFILE
 rm -f ~/.bash_history ~/.zsh_history
+log_step "History cleared."
 
-# Reboot the system
-sudo reboot
+log_step "Setup complete. Rebooting system"
+run_quiet reboot
