@@ -7,21 +7,20 @@ set -o nounset
 # Don't hide errors within pipes
 set -o pipefail
 
+# Update & upgrade
 sudo apt update -y
 sudo apt upgrade -y
 
-# Add a choice menu
+# Install useful tools
+sudo apt install -y jq kali-linux-everything kali-wallpapers-2020.4
 
+# Install with suppressed prompts
+sudo DEBIAN_FRONTEND=noninteractive apt install -y tor flameshot
 
-sudo apt install -y jq
-sudo apt install -y kali-linux-everything
-sudo apt install -y kali-wallpapers-2020.4
-
-sudo DEBIAN_FRONTEND=noninteractive apt install -y tor 
-sudo DEBIAN_FRONTEND=noninteractive apt install -y flameshot
-
+# Create Firefox policies directory
 sudo mkdir -p /etc/firefox/policies
 
+# Apply Firefox extension policies
 sudo tee /etc/firefox/policies/policies.json > /dev/null <<EOF
 {
   "policies": {
@@ -37,7 +36,13 @@ sudo tee /etc/firefox/policies/policies.json > /dev/null <<EOF
 }
 EOF
 
-
-# Keep at end
+# Clean up unused packages
 sudo apt autoremove -y
-history -c && unset HISTFILE && rm -rf ~/.bash_history ~/.zsh_history
+
+# Clear bash history
+history -c
+unset HISTFILE
+rm -f ~/.bash_history ~/.zsh_history
+
+# Reboot the system
+sudo reboot
